@@ -1,0 +1,12 @@
+{
+  "name": "studio-ailleurs",
+  "version": "1.0.0",
+  "description": "Boutique d'affiches Studio Ailleurs",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static site - no build needed'"
+  },
+  "keywords": ["affiches", "voyage", "ecommerce"],
+  "author": "Studio Ailleurs",
+  "license": "MIT"
+}
