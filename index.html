@@ -170,7 +170,7 @@
     
     .product-card {
       cursor: pointer;
-      transition: transform 0.3s, opacity 0.3s;
+      transition: transform 0.3s;
     }
     
     .product-card:hover {
@@ -188,21 +188,6 @@
       justify-content: center;
       color: var(--text-secondary);
       font-size: 14px;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .product-image::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 10px,
-        rgba(0,0,0,0.02) 10px,
-        rgba(0,0,0,0.02) 20px
-      );
     }
     
     .product-name {
@@ -216,6 +201,12 @@
       color: var(--accent);
       margin-bottom: 1rem;
       font-weight: 500;
+    }
+    
+    .product-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
     }
     
     .add-to-cart {
@@ -234,119 +225,6 @@
     .add-to-cart:hover {
       background: var(--accent);
       color: white;
-    }
-    
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: flex-end;
-      z-index: 1000;
-    }
-    
-    .modal {
-      background: var(--bg);
-      width: 100%;
-      max-width: 500px;
-      max-height: 80vh;
-      overflow-y: auto;
-      border-radius: 12px 12px 0 0;
-      padding: 2rem;
-      animation: slideUp 0.3s ease-out;
-    }
-    
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-    
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-    
-    .modal-title {
-      font-size: 20px;
-      font-weight: 500;
-    }
-    
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: var(--text-primary);
-    }
-    
-    .cart-items {
-      margin-bottom: 2rem;
-    }
-    
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 1rem 0;
-      border-bottom: 0.5px solid var(--border);
-    }
-    
-    .item-details {
-      flex: 1;
-    }
-    
-    .item-name {
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 0.25rem;
-    }
-    
-    .item-qty {
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-    
-    .item-price {
-      font-size: 14px;
-      font-weight: 500;
-    }
-    
-    .cart-empty {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-secondary);
-    }
-    
-    .cart-total {
-      display: flex;
-      justify-content: space-between;
-      font-size: 16px;
-      font-weight: 500;
-      padding: 1rem 0;
-      margin-bottom: 1.5rem;
-    }
-    
-    .checkout-btn {
-      width: 100%;
-      padding: 1rem;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    
-    .checkout-btn:hover {
-      opacity: 0.9;
-    }
-    
-    .checkout-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
     }
     
     footer {
@@ -380,168 +258,36 @@
       nav { flex-direction: column; text-align: center; }
       .hero h1 { font-size: 32px; }
       .products-grid { grid-template-columns: 1fr; }
-      .modal { max-width: 100%; }
     }
   </style>
 </head>
 <body>
-  <div id="root"></div>
+  <header>
+    <div class="logo">Studio Ailleurs</div>
+    <nav>
+      <a href="#affiches">Affiches</a>
+      <a href="#apropos">À propos</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="cart-btn" onclick="alert('Panier vide')">Panier (0)</button>
+  </header>
   
-  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/react.production.min.js"></script>
-  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/react-dom.production.min.js"></script>
+  <section class="hero">
+    <h1>Voyager sans quitter le mur</h1>
+    <p class="tagline">Vos plus belles destinations, affichées</p>
+    <div class="hero-image">Vos affiches personnalisées</div>
+  </section>
   
-  <script>
-    const { useState } = React;
-    
-    const products = [
-      { id: 1, name: 'Barcelone', price: 24.90, desc: 'Mosaïques, architecture, couleurs chaudes' },
-      { id: 2, name: 'Paris', price: 24.90, desc: 'Élégance intemporelle, la Ville Lumière' },
-      { id: 3, name: 'Nice', price: 24.90, desc: 'Côte d\'Azur, retro et méditerranéen' },
-      { id: 4, name: 'Lisbonne', price: 24.90, desc: 'Azulejos typiques, pentes pittoresques' }
-    ];
-    
-    function App() {
-      const [cart, setCart] = useState([]);
-      const [showCart, setShowCart] = useState(false);
-      
-      const addToCart = (product) => {
-        const existing = cart.find(item => item.id === product.id);
-        if (existing) {
-          setCart(cart.map(item => 
-            item.id === product.id 
-              ? { ...item, qty: item.qty + 1 }
-              : item
-          ));
-        } else {
-          setCart([...cart, { ...product, qty: 1 }]);
-        }
-      };
-      
-      const removeFromCart = (id) => {
-        setCart(cart.filter(item => item.id !== id));
-      };
-      
-      const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      
-      return React.createElement(
-        React.Fragment,
-        null,
-        React.createElement('header', null,
-          React.createElement('div', { className: 'logo' }, 'Studio Ailleurs'),
-          React.createElement('nav', null,
-            React.createElement('a', { href: '#affiches' }, 'Affiches'),
-            React.createElement('a', { href: '#apropos' }, 'À propos'),
-            React.createElement('a', { href: '#contact' }, 'Contact')
-          ),
-          React.createElement('button', {
-            className: 'cart-btn',
-            onClick: () => setShowCart(true)
-          }, `Panier (${cart.length})`)
-        ),
-        React.createElement('section', { className: 'hero' },
-          React.createElement('h1', null, 'Voyager sans quitter le mur'),
-          React.createElement('p', { className: 'tagline' }, 'Vos plus belles destinations, affichées'),
-          React.createElement('div', { className: 'hero-image' }, 'Vos affiches personnalisées')
-        ),
-        React.createElement('section', { className: 'benefits' },
-          React.createElement('div', { className: 'benefit' },
-            React.createElement('h3', null, 'Papier Premium'),
-            React.createElement('p', null, '250g mat, rendu luxe')
-          ),
-          React.createElement('div', { className: 'benefit' },
-            React.createElement('h3', null, 'Design Unique'),
-            React.createElement('p', null, 'Chaque destination racontée')
-          ),
-          React.createElement('div', { className: 'benefit' },
-            React.createElement('h3', null, 'Livraison Rapide'),
-            React.createElement('p', null, '7 jours en France')
-          )
-        ),
-        React.createElement('section', { className: 'products-section', id: 'affiches' },
-          React.createElement('h2', { className: 'section-title' }, 'Nos Destinations'),
-          React.createElement('div', { className: 'products-grid' },
-            products.map(product =>
-              React.createElement('div', { key: product.id, className: 'product-card' },
-                React.createElement('div', { className: 'product-image' }, product.name),
-                React.createElement('div', { className: 'product-name' }, product.name),
-                React.createElement('div', { style: { fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1rem' } }, product.desc),
-                React.createElement('div', { className: 'product-price' }, `€${product.price.toFixed(2)}`),
-                React.createElement('button', {
-                  className: 'add-to-cart',
-                  onClick: () => addToCart(product)
-                }, 'Ajouter au panier')
-              )
-            )
-          )
-        ),
-        React.createElement('footer', { id: 'contact' },
-          React.createElement('div', { className: 'footer-links' },
-            React.createElement('a', { href: '#' }, 'À propos'),
-            React.createElement('a', { href: '#' }, 'Contact'),
-            React.createElement('a', { href: '#' }, 'Instagram'),
-            React.createElement('a', { href: '#' }, 'Politique de confidentialité')
-          ),
-          React.createElement('p', null, '© 2026 Studio Ailleurs. Tous droits réservés.')
-        ),
-        showCart && React.createElement('div', {
-          className: 'modal-overlay',
-          onClick: () => setShowCart(false)
-        },
-          React.createElement('div', {
-            className: 'modal',
-            onClick: (e) => e.stopPropagation()
-          },
-            React.createElement('div', { className: 'modal-header' },
-              React.createElement('div', { className: 'modal-title' }, 'Votre Panier'),
-              React.createElement('button', {
-                className: 'close-btn',
-                onClick: () => setShowCart(false)
-              }, '×')
-            ),
-            cart.length === 0 ?
-              React.createElement('div', { className: 'cart-empty' }, 'Votre panier est vide') :
-              React.createElement(React.Fragment, null,
-                React.createElement('div', { className: 'cart-items' },
-                  cart.map(item =>
-                    React.createElement('div', { key: item.id, className: 'cart-item' },
-                      React.createElement('div', { className: 'item-details' },
-                        React.createElement('div', { className: 'item-name' }, item.name),
-                        React.createElement('div', { className: 'item-qty' }, `Quantité: ${item.qty}`)
-                      ),
-                      React.createElement('div', null,
-                        React.createElement('div', { className: 'item-price' }, `€${(item.price * item.qty).toFixed(2)}`),
-                        React.createElement('button', {
-                          style: {
-                            background: 'none',
-                            border: 'none',
-                            color: 'var(--text-secondary)',
-                            cursor: 'pointer',
-                            fontSize: '12px',
-                            marginTop: '0.25rem'
-                          },
-                          onClick: () => removeFromCart(item.id)
-                        }, 'Supprimer')
-                      )
-                    )
-                  )
-                ),
-                React.createElement('div', { className: 'cart-total' },
-                  React.createElement('span', null, 'Total'),
-                  React.createElement('span', null, `€${cartTotal.toFixed(2)}`)
-                ),
-                React.createElement('button', {
-                  className: 'checkout-btn',
-                  onClick: () => {
-                    window.location.href = 'https://2kjbgf-uf.myshopify.com/cart';
-                  }
-                }, 'Passer la commande')
-              )
-          )
-        )
-      );
-    }
-    
-    ReactDOM.render(React.createElement(App), document.getElementById('root'));
-  </script>
-</body>
-</html>
+  <section class="benefits">
+    <div class="benefit">
+      <h3>Papier Premium</h3>
+      <p>250g mat, rendu luxe</p>
+    </div>
+    <div class="benefit">
+      <h3>Design Unique</h3>
+      <p>Chaque destination racontée</p>
+    </div>
+    <div class="benefit">
+      <h3>Livraison Rapide</h3>
+      <p>7 jours en France</p>
+    </div>
